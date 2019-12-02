@@ -10,5 +10,7 @@ var uiController =(function(){
 
 // APP CONTROLLER
 var appController = (function(budgetCtrl,uiCtrl){  
-   // Some code 
+    document.querySelector('.add_btn').addEventListener('click',function(){
+        console.log("Button Clicked");
+    });
 })(budgetController,uiController);
