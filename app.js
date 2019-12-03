@@ -58,4 +58,11 @@ var appController = (function(budgetCtrl,uiCtrl){
 
     }
 
+    return {
+        init : function(){
+            console.log("Application has Started");
+            setUpEventListeners();
+        }
+    }
+
 })(budgetController,uiController);
