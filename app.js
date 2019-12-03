@@ -9,7 +9,8 @@ var uiController =(function(){
     var domStrings = {
         inputType : ".add__type",
         inputDescription : ".add__description",
-        inputValue : ".add__value"
+        inputValue : ".add__value",
+        inputButton : ".add__btn"
     };
 
     return {
@@ -20,6 +21,9 @@ var uiController =(function(){
                 value : document.querySelector(domStrings.inputValue).value
             }
 
+        },
+        getDOMstrings: function(){
+            return domStrings;
         }
     }
 
@@ -28,6 +32,8 @@ var uiController =(function(){
 // APP CONTROLLER
 var appController = (function(budgetCtrl,uiCtrl){  
     
+    var DOM = UICtrl.getDOMstrings();
+
     var ctrlAddItem = function (){
         // 1. Get the field input data
         var input = uiCtrl.getInput();
@@ -42,7 +48,7 @@ var appController = (function(budgetCtrl,uiCtrl){
 
     }
 
-    document.querySelector('.add__btn').addEventListener('click', ctrlAddItem);
+    document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
 
     document.addEventListener("keypress",function(event){
         if(event.keyCode === 13 || event.which === 13){
