@@ -32,7 +32,17 @@ var uiController =(function(){
 // APP CONTROLLER
 var appController = (function(budgetCtrl,uiCtrl){  
     
-    var DOM = UICtrl.getDOMstrings();
+    var setUpEventListeners = function(){
+        var DOM = UICtrl.getDOMstrings();
+
+        document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
+
+        document.addEventListener("keypress",function(event){
+            if(event.keyCode === 13 || event.which === 13){
+                ctrlAddItem();
+            }
+        });
+    }
 
     var ctrlAddItem = function (){
         // 1. Get the field input data
@@ -47,13 +57,5 @@ var appController = (function(budgetCtrl,uiCtrl){
         // 5. Need to display the budget on UI
 
     }
-
-    document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
-
-    document.addEventListener("keypress",function(event){
-        if(event.keyCode === 13 || event.which === 13){
-            ctrlAddItem();
-        }
-    });
 
 })(budgetController,uiController);
