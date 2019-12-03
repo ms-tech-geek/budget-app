@@ -33,7 +33,7 @@ var uiController =(function(){
 var appController = (function(budgetCtrl,uiCtrl){  
     
     var setUpEventListeners = function(){
-        var DOM = UICtrl.getDOMstrings();
+        var DOM = uiCtrl.getDOMstrings();
 
         document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
 
