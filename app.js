@@ -47,7 +47,7 @@ var appController = (function(budgetCtrl,uiCtrl){
     var ctrlAddItem = function (){
         // 1. Get the field input data
         var input = uiCtrl.getInput();
-        console.log(input);
+
         // 2. Add the item to budget controller
 
         // 3. Add the item to the UI
