@@ -16,7 +16,7 @@ var uiController =(function(){
         getInput : function(){
             return {
                 type : document.querySelector(domStrings.inputType).value, // Will be either INC or EXP
-                description : document.querySelector(inputDescription.inputDescription).value, // Description of transaction
+                description : document.querySelector(domStrings.inputDescription).value, // Description of transaction
                 value : document.querySelector(domStrings.inputValue).value
             }
 
