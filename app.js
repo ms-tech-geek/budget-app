@@ -66,3 +66,5 @@ var appController = (function(budgetCtrl,uiCtrl){
     }
 
 })(budgetController,uiController);
+
+appController.init();
