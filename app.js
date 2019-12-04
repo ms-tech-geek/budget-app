@@ -1,39 +1,85 @@
 // BUDGET CONTROLLER
 var budgetController = (function () {
-    // Some code
-    var data = [];
-    console.log(data);
+
+    var Expense = function (id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var Income = function (id, description, value) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+    };
+
+    var data = {
+        allItems: {
+            exp: [],
+            inc: []
+        },
+        totals: {
+            exp: 0,
+            inc: 0
+        }
+    }
+
     return {
-        getData: function (input) {
-            data.push(input)
-            console.log(data);
+        addItem: function (type, des, val) {
+            var newItem, ID;
+
+            // Create new ID based on last stored ID
+            if (data.allItems[type].length > 0)
+                ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+            else
+                ID = 0;
+
+            // Create new item based on 'inc' or 'exp' type
+            if (type === "exp")
+                newItem = new Expense(ID, des, val);
+            else if (type === "inc")
+                newItem = new Income(ID, des, val);
+
+
+
+            // Push it into our data structure    
+            data.allItems[type].push(newItem);
+
+            return newItem;
+            // Return the new element
 
         },
+        testing: function () {
+            console.log(data);
+        },
 
-        calculateBudget: function (value, type) {
-            if (type == "inc") {
-                var total = document.getElementsByClassName("budget__income--value")[0].innerHTML;
-                var sum = parseFloat(total.substr(1, total.length).replace(/\,/g, ''));
-                value = parseFloat(value);
-                document.getElementsByClassName("budget__income--value")[0].innerHTML = `+ ${sum + value}`
-            } else {
-                var total = document.getElementsByClassName("budget__expenses--value")[0].innerHTML;
-                console.log("total" + total)
-                var sum = (parseFloat(total.substr(1, total.length).replace(/\,/g, '')));
-                value = parseFloat(value);
-                console.log("sum -- " + sum + "    Value -- " + value + "  Total -- " + (sum + value))
-                document.getElementsByClassName("budget__expenses--value")[0].innerHTML = `- ${sum + value}`
+
+        //Calculating budget
+        calculateBudget: function (type, value) {
+
+            var values = {
+                income: (document.getElementsByClassName("budget__income--value")[0].innerText),
+                expenses: document.getElementsByClassName("budget__expenses--value")[0].innerText
             }
 
+            var incomeValue = parseFloat((values.income).substr(1, values.income.length).replace(/\,/g, ''));
+            var expensesValue = parseFloat((values.expenses).substr(1, values.expenses.length).replace(/\,/g, ''));
+            if (type == "inc") {
+                return (parseFloat(incomeValue + parseFloat(value)).toFixed(2))
+            } else {
+                return (parseFloat(expensesValue + parseFloat(value)).toFixed(2))
+            }
         },
-        calculatePercentage: function () {
-            let income = document.getElementsByClassName("budget__income--value")[0].innerHTML;
-            let expenses = document.getElementsByClassName("budget__expenses--value")[0].innerHTML;
-            income = parseFloat(income.substr(1, income.length).replace(/\,/g, '')).toFixed(2);
-            expenses = parseFloat(expenses.substr(1, expenses.length).replace(/\,/g, '')).toFixed(2);
-            let percentage = Math.round((expenses * 100) / income);
-            return percentage;
 
+
+        //Calculate Percentage
+        calculatePercentage: function (value) {
+            var values = {
+                income: document.getElementsByClassName("budget__income--value")[0].innerText
+            }
+            var incomeValue = parseFloat((values.income).substr(1, values.income.length).replace(/\,/g, ''));
+            var percentage = Math.round((value * 100) / incomeValue);
+            return percentage;
         }
     }
 })();
@@ -44,16 +90,44 @@ var uiController = (function () {
     var domStrings = {
         inputType: ".add__type",
         inputDescription: ".add__description",
-        inputValue: ".add__value"
+        inputValue: ".add__value",
+        inputButton: ".add__btn",
+        incomeParentClass: ".income__list",
+        incomeExpensesClass: ".expenses__list",
+        newClass: "item clearfix",
+        inputDesc: "item__description",
+        valueClass: "right clearfix",
+        inputValDiv: "item__value",
+        inputDelete: "item__delete",
+        btnClass: "item__delete--btn"
     };
 
 
+    // for creating DOM Elements
+    var elements = {
+        create: function () {
+            return document.createElement("div")
+        },
+        newDescription: function () {
+            return document.createElement("div")
+        },
+        newValueDiv: function () {
+            return document.createElement("div")
+        },
+        newValueSubDiv: function () {
+            return document.createElement("div")
+        },
+        newDel: function () {
+            return document.createElement("div")
+        },
+        newBtn: function () {
+            return document.createElement("button")
+        }
+
+    }
 
     return {
         getInput: function () {
-            console.log(document.querySelector(domStrings.inputType).value);
-            console.log(document.querySelector(domStrings.inputDescription).value)
-            console.log(document.querySelector(domStrings.inputValue).value);
             return {
                 type: document.querySelector(domStrings.inputType).value, // Will be either INC or EXP
                 description: document.querySelector(domStrings.inputDescription).value, // Description of transaction
@@ -61,96 +135,130 @@ var uiController = (function () {
             }
 
         },
-        displayData: function (input) {
-            //console.log(input.type + input.description + input.value);
-            var newElement = document.createElement("div");
-            var subDivDescription = document.createElement("div");
-            var subDivValue = document.createElement("div");
-            var value = document.createElement("div");
+        getDOMstrings: function () {
+            return domStrings;
+        },
 
-            var buttonDiv = document.createElement("div");
-            var btn = document.createElement("button");
-            if (input.type == "inc") {
+
+        //displaying List
+        display: function (type, description, value) {
+
+            if (type == "inc") {
                 var parentClass = "income__list";
                 var symbol = "+";
-
             } else {
                 var parentClass = "expenses__list";
-                var symbol = "-";
+                var symbol = "-"
+            }
+
+            var methods = { //calling DOM-elements-creating functions
+                newElement: elements.create(),
+                descDiv: elements.newDescription(),
+                valDiv: elements.newValueDiv(),
+                newvalSubDiv: elements.newValueSubDiv(),
+                deleteDiv: elements.newDel(),
+                btnDiv: elements.newBtn()
+            }
+
+            methods.newElement.setAttribute("class", domStrings.newClass); //seeting attributes
+            methods.descDiv.setAttribute("class", domStrings.inputDesc);
+            methods.valDiv.setAttribute("class", domStrings.valueClass);
+            methods.newvalSubDiv.setAttribute("class", domStrings.inputValDiv);
+            methods.deleteDiv.setAttribute("class", domStrings.inputDelete);
+            methods.btnDiv.setAttribute("class", domStrings.btnClass);
+
+
+            (document.getElementsByClassName(parentClass)[0]).appendChild(methods.newElement); //appending new elements to their Parent elements
+            methods.newElement.appendChild(methods.descDiv);
+            methods.newElement.appendChild(methods.valDiv);
+            methods.valDiv.appendChild(methods.newvalSubDiv);
+            if (type != "inc") {
                 var percentage = document.createElement("div");
-                percentage.innerHTML = budgetController.calculatePercentage() + "%";
                 percentage.setAttribute("class", "item__percentage");
-
+                methods.valDiv.appendChild(percentage);
             }
+            methods.valDiv.appendChild(methods.deleteDiv);
+            methods.deleteDiv.appendChild(methods.btnDiv);
 
-            var classes = {
-                childCount: document.getElementsByClassName(parentClass)[0].childElementCount,
-                descriptionClass: "item__description",
-                valueClass: "right clearfix",
-                valueSubClass: "item__value",
-                deleteClass: "item__delete",
-                btnClass: "item__delete--btn",
-                percentClass: "item__percentage"
-            }
 
-            newElement.setAttribute("class", "item clearfix");
-            newElement.setAttribute("id", `income-${classes.childCount}`);
-            subDivDescription.setAttribute("class", classes.descriptionClass);
-            subDivValue.setAttribute("class", classes.valueClass);
-            value.setAttribute("class", classes.valueSubClass);
-            buttonDiv.setAttribute("class", classes.deleteClass);
-            btn.setAttribute("class", classes.btnClass);
+            methods.descDiv.innerText = description; //description
+            methods.newvalSubDiv.innerText = symbol + value; //value
+            methods.btnDiv.innerHTML = `<i class="ion-ios-close-outline"></i>`;
+            percentage.innerHTML = budgetController.calculatePercentage(value) + "%";
 
-            subDivDescription.innerText += input.description;
-            value.innerText += symbol + input.value + ".00";
-            btn.innerHTML = ' <i class="ion-ios-close-outline"></i> ';
-
-            document.getElementsByClassName(parentClass)[0].appendChild(newElement); //New Element added to the list
-            newElement.appendChild(subDivDescription); //item description appended
-            newElement.appendChild(subDivValue); //Value Element
-            subDivValue.appendChild(value); //Value added
-            if (input.type != "inc") {
-                subDivValue.appendChild(percentage);
-            }
-
-            buttonDiv.appendChild(btn);
-            subDivValue.appendChild(buttonDiv);
 
         },
 
+        //Update
+        incomeExpenses: function (type, budget) {
+            if (type == "inc") {
+                document.getElementsByClassName("budget__income--value")[0].innerText = "+" + budget;
+            } else document.getElementsByClassName("budget__expenses--value")[0].innerText = "-" + budget;
+        },
+
+        //Display Budget
         displayBudget: function () {
-            var income = (document.getElementsByClassName("budget__income--value")[0].innerHTML);
-            var expenses = (document.getElementsByClassName("budget__expenses--value")[0].innerHTML);
-            income = parseFloat(income.substr(1, income.length).replace(/\,/g, '')).toFixed(2);
-            expenses = parseFloat(expenses.substr(1, income.length).replace(/\,/g, '')).toFixed(2);
-            var sums = parseFloat(income - expenses).toFixed(2);
-            document.getElementsByClassName("budget__value")[0].innerHTML = sums;
+            let values = {
+                income: document.getElementsByClassName("budget__income--value")[0].innerText,
+                expenses: document.getElementsByClassName("budget__expenses--value")[0].innerText
+            }
+            values.income = parseFloat(values.income.substr(1, values.income.length).replace(/\,/g, ''));
+            values.expenses = parseFloat(values.expenses.substr(1, values.expenses.length).replace(/\,/g, ''));
+            var f = parseFloat(values.income - values.expenses).toFixed(2);
+            if (f > 0) document.getElementsByClassName("budget__value")[0].innerText = "+" + f;
+            else document.getElementsByClassName("budget__value")[0].innerText = f;
         }
     }
+
 })();
 
 // APP CONTROLLER
 var appController = (function (budgetCtrl, uiCtrl) {
 
-    var ctrlAddItem = function () {
-        // 1. Get the field input data
-        var input = uiCtrl.getInput();
-        console.log(input);
-        // 2. Add the item to budget controller
-        budgetCtrl.getData(input);
-        // 3. Add the item to the UI
-        uiCtrl.displayData(input);
-        // 4. Calculate the budget
-        budgetCtrl.calculateBudget(input.value, input.type);
-        // 5. Need to display the budget on UI
-        uiCtrl.displayBudget();
+    var setUpEventListeners = function () {
+        var DOM = uiCtrl.getDOMstrings();
+
+        document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
+
+        document.addEventListener("keypress", function (event) {
+            if (event.keyCode === 13 || event.which === 13) {
+                ctrlAddItem();
+            }
+        });
     }
 
-    document.querySelector('.add__btn').addEventListener('click', ctrlAddItem);
+    var ctrlAddItem = function () {
+        var input, newItem, budget;
 
-    document.addEventListener("keypress", function (event) {
-        if (event.keyCode === 13 || event.which === 13) {
-            ctrlAddItem();
+        // 1. Get the field input data
+        input = uiCtrl.getInput();
+
+
+        // 2. Add the item to budget controller
+        newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+
+        // 3. Add the item to the UI
+        uiCtrl.display(input.type, input.description, input.value);
+
+        // 4. Calculate the budget
+        budget = budgetCtrl.calculateBudget(input.type, input.value);
+        budgetCtrl.calculatePercentage(input.value);
+
+
+
+        // 5. Need to display the budget on UI
+        uiCtrl.incomeExpenses(input.type, budget)
+        uiCtrl.displayBudget(budget);
+
+    }
+
+    return {
+        init: function () {
+            console.log("Application has Started");
+            setUpEventListeners();
         }
-    });
+    }
+
 })(budgetController, uiController);
+
+appController.init();
