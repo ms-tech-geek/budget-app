@@ -69,7 +69,7 @@ var uiController =(function(){
             return {
                 type : document.querySelector(domStrings.inputType).value, // Will be either INC or EXP
                 description : document.querySelector(domStrings.inputDescription).value, // Description of transaction
-                value : document.querySelector(domStrings.inputValue).value
+                value : parseFloat(document.querySelector(domStrings.inputValue).value)
             }
 
         },
@@ -135,6 +135,15 @@ var appController = (function(budgetCtrl,uiCtrl){
         });
     }
 
+    var updateBudget = function(){
+        
+        // Calculate the budget
+
+        // Return the budget
+
+        // Display the budget on UI
+    };
+
     var ctrlAddItem = function (){
         var input, newItem;
         
@@ -146,11 +155,12 @@ var appController = (function(budgetCtrl,uiCtrl){
 
         // 3. Add the item to the UI
         uiCtrl.addListItem(newItem, input.type);
+
+        // 4. Clear the fields
         uiCtrl.clearFields();
 
-        // 4. Calculate the budget
-
-        // 5. Need to display the budget on UI
+        // 5. Calculate and update the budget
+        updateBudget();
 
     }
 
