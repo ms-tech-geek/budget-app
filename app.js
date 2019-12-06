@@ -66,9 +66,6 @@ var budgetController = (function() {
       if (data.totals.inc > 0)
         data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
       else data.percentage = -1;
-      console.log("data");
-      console.log(data.allItems.inc);
-      console.log(data.allItems.exp);
     },
 
     calculatePercentage: function(type, value) {
@@ -88,7 +85,6 @@ var budgetController = (function() {
 
     //Delete item from Data Structure
     deleteItem: function(target) {
-      console.log("id==" + target);
       var element = document.getElementById(target); //get div element using id
       if (target.split("-")[0] == "income") {
         let id = target.split("-")[1];
@@ -258,7 +254,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
   };
 
   var ctrlDeleteItem = function(e) {
-    var targetID = e.path[4].id; // get the id of the element
+    var targetID = e.path[4].id; // get the id of the parent element
     budgetCtrl.deleteItem(targetID); //delete item from Data Structure
     uiCtrl.deleteListItem(targetID); //delete item from UI
     updateBudget();
