@@ -66,6 +66,9 @@ var budgetController = (function() {
       if (data.totals.inc > 0)
         data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
       else data.percentage = -1;
+      console.log("data");
+      console.log(data.allItems.inc);
+      console.log(data.allItems.exp);
     },
 
     calculatePercentage: function(type, value) {
@@ -85,19 +88,14 @@ var budgetController = (function() {
 
     //Delete item from Data Structure
     deleteItem: function(target) {
+      console.log("id==" + target);
       var element = document.getElementById(target); //get div element using id
       if (target.split("-")[0] == "income") {
         let id = target.split("-")[1];
-        data.allItems.inc = data.allItems.inc.filter(
-          ele => data.allItems.inc.indexOf(ele) != id
-        ); //delete the item from data structure
-        data.allItems.inc.map(x => (x.id = data.allItems.inc.indexOf(x))); //update the ids of the elements in the array
+        data.allItems.inc = data.allItems.inc.filter(ele => ele.id != id); //delete the item from data structure
       } else if (target.split("-")[0] == "expense") {
         let id = target.split("-")[1];
-        data.allItems.exp = data.allItems.exp.filter(
-          ele => data.allItems.exp.indexOf(ele) != id
-        ); //delete the item from data structure
-        data.allItems.exp.map(x => (x.id = data.allItems.exp.indexOf(x))); //update the ids of the elements in the array
+        data.allItems.exp = data.allItems.exp.filter(ele => ele.id != id); //delete the item from data structure
       }
     },
 
@@ -224,7 +222,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
     });
   };
 
-  var updateBudget = function(type, value) {
+  var updateBudget = function() {
     var budget;
 
     // Calculate the budget
@@ -235,7 +233,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
 
     // Display the budget on UI
     uiCtrl.displayBudget(budget);
-    uiCtrl.updatePercentage(...budgetCtrl.calculatePercentage(type, value));
+    //uiCtrl.updatePercentage(...budgetCtrl.calculatePercentage(type, value));
   };
 
   var ctrlAddItem = function() {
@@ -255,7 +253,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
       uiCtrl.clearFields();
 
       // 5. Calculate and update the budget
-      updateBudget(input.type, input.value);
+      updateBudget();
     }
   };
 
@@ -263,6 +261,8 @@ var appController = (function(budgetCtrl, uiCtrl) {
     var targetID = e.path[4].id; // get the id of the element
     budgetCtrl.deleteItem(targetID); //delete item from Data Structure
     uiCtrl.deleteListItem(targetID); //delete item from UI
+    updateBudget();
+    uiCtrl.clearFields();
   };
 
   return {
