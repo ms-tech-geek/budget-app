@@ -85,7 +85,7 @@ var budgetController = (function() {
 
     //Delete item from Data Structure
     deleteItem: function(target) {
-      var element = document.getElementById(target); //get div element using id
+      var element = document.getElementById(target); // ToDo - This is declared but never used
       if (target.split("-")[0] == "income") {
         let id = target.split("-")[1];
         data.allItems.inc = data.allItems.inc.filter(ele => ele.id != id); //delete the item from data structure
@@ -213,8 +213,8 @@ var appController = (function(budgetCtrl, uiCtrl) {
       }
     });
 
-    document.addEventListener("click", function(e) {
-      ctrlDeleteItem(e);
+    document.addEventListener("click", function(e) { // Fix - This event should occur only on "item_delete"
+      ctrlDeleteItem(e); // Todo - e as argument does not describe e // Need to have more specific naming 
     });
   };
 
