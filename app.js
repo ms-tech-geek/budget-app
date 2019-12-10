@@ -189,7 +189,7 @@ var uiController = (function() {
     deleteListItem: function(id) {
       document
         .getElementById(id)
-        .parentNode.removeChild(document.getElementById(id));
+        .parentNode.removeChild(document.getElementById(id)); // Todo - Save the value for document.getElementById(id) in variable and resuse
     },
     getDOMstrings: function() {
       return domStrings;
@@ -213,7 +213,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
     });
 
     document.addEventListener("click", function(e) {
-      if (e.target.className == "ion-ios-close-outline") {
+      if (e.target.className == "ion-ios-close-outline") { // Fix - This logic should be defined in ctrlDeleteItem // not while calling it
         ctrlDeleteItem(e); 
       }
     });
