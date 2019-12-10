@@ -213,8 +213,9 @@ var appController = (function(budgetCtrl, uiCtrl) {
     });
 
     document.addEventListener("click", function(e) {
-      // This event should occur only on "item_delete"
-      if (e.target.className == "ion-ios-close-outline") ctrlDeleteItem(e); // if the target is X button.
+      if (e.target.className == "ion-ios-close-outline") {
+        ctrlDeleteItem(e); 
+      }
     });
   };
 
@@ -254,11 +255,18 @@ var appController = (function(budgetCtrl, uiCtrl) {
   };
 
   var ctrlDeleteItem = function(e) {
-    console.log(e);
-    var targetID = e.path[4].id; // get the id of the parent element
-    budgetCtrl.deleteItem(targetID); //delete item from Data Structure
-    uiCtrl.deleteListItem(targetID); //delete item from UI
+    
+    // get the id of the parent element
+    var targetID = e.path[4].id; 
+
+    //delete item from Data Structure
+    budgetCtrl.deleteItem(targetID); 
+    
+    //delete item from UI
+    uiCtrl.deleteListItem(targetID); 
+    
     updateBudget();
+    
     uiCtrl.clearFields();
   };
 
