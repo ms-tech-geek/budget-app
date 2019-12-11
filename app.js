@@ -20,6 +20,21 @@ var budgetController = (function() {
     data.totals[type] = sum;
   };
 
+  var months = [
+    "January",
+    "Febraury",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+
   var data = {
     allItems: {
       exp: [],
@@ -99,6 +114,12 @@ var budgetController = (function() {
 
     testing: function() {
       console.log(data);
+    },
+
+    //get Month
+    getMonth: function() {
+      var month = new Date().getMonth();
+      return months[month];
     }
   };
 })();
@@ -197,6 +218,7 @@ var uiController = (function() {
       return domStrings;
     },
 
+    //display percentages in UI
     displayPercentages: function(percentage) {
       let element = document.querySelector(domStrings.expenseContainer);
       let id = element.childElementCount;
@@ -204,6 +226,13 @@ var uiController = (function() {
         domStrings.itemPercentage
       )[id - 1];
       finalElement.innerHTML = percentage + "%";
+    },
+
+    //Update Month in UI
+    updateMonth: function(month) {
+      document.getElementsByClassName(
+        "budget__title--month"
+      )[0].innerHTML = month;
     }
   };
 })();
@@ -226,6 +255,12 @@ var appController = (function(budgetCtrl, uiCtrl) {
     document.addEventListener("click", function(e) {
       ctrlDeleteItem(e);
     });
+  };
+
+  //Get Month
+  var displayMonth = function() {
+    let month = budgetCtrl.getMonth();
+    uiCtrl.updateMonth(month);
   };
 
   var updateBudget = function() {
@@ -302,6 +337,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
         percentage: 0
       });
       setUpEventListeners();
+      displayMonth();
     }
   };
 })(budgetController, uiController);
