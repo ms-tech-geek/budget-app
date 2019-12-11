@@ -68,12 +68,6 @@ var budgetController = (function() {
       else data.percentage = -1;
     },
 
-    calculatePercentage: function(type, value) {
-      data.expensesPercentage = Math.round((value * 100) / data.totals.inc);
-      var id = data.allItems["exp"][data.allItems["exp"].length - 1].id;
-      return [data.expensesPercentage, id];
-    },
-
     getBudget: function() {
       return {
         budget: data.budget,
@@ -91,6 +85,15 @@ var budgetController = (function() {
       } else if (target.split("-")[0] == "expense") {
         let id = target.split("-")[1];
         data.allItems.exp = data.allItems.exp.filter(ele => ele.id != id); //delete the item from data structure
+      }
+    },
+
+    //Calculate percentages for each element
+    getPercentages: function(type, value) {
+      if (type == "exp") {
+        let totalIncome = data.totals.inc;
+        let percentage = (value * 100) / totalIncome;
+        return Math.round(percentage);
       }
     },
 
@@ -173,7 +176,7 @@ var uiController = (function() {
 
       if (obj.percentage > 0)
         document.querySelector(domStrings.percentageLabel).textContent =
-          obj.percentage;
+          obj.percentage + "%";
       else
         document.querySelector(domStrings.percentageLabel).textContent = "---";
     },
@@ -187,12 +190,20 @@ var uiController = (function() {
 
     //Delete item from UI
     deleteListItem: function(id) {
-      document
-        .getElementById(id)
-        .parentNode.removeChild(document.getElementById(id)); // Todo - Save the value for document.getElementById(id) in variable and resuse
+      let element = document.getElementById(id);
+      element.parentNode.removeChild(element);
     },
     getDOMstrings: function() {
       return domStrings;
+    },
+
+    displayPercentages: function(percentage) {
+      let element = document.querySelector(domStrings.expenseContainer);
+      let id = element.childElementCount;
+      let finalElement = element.getElementsByClassName(
+        domStrings.itemPercentage
+      )[id - 1];
+      finalElement.innerHTML = percentage + "%";
     }
   };
 })();
@@ -213,9 +224,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
     });
 
     document.addEventListener("click", function(e) {
-      if (e.target.className == "ion-ios-close-outline") { // Fix - This logic should be defined in ctrlDeleteItem // not while calling it
-        ctrlDeleteItem(e); 
-      }
+      ctrlDeleteItem(e);
     });
   };
 
@@ -230,7 +239,6 @@ var appController = (function(budgetCtrl, uiCtrl) {
 
     // Display the budget on UI
     uiCtrl.displayBudget(budget);
-    //uiCtrl.updatePercentage(...budgetCtrl.calculatePercentage(type, value));
   };
 
   var ctrlAddItem = function() {
@@ -251,23 +259,37 @@ var appController = (function(budgetCtrl, uiCtrl) {
 
       // 5. Calculate and update the budget
       updateBudget();
+
+      //6.  Update Percentages
+      updatePercentages(input.type, input.value);
     }
   };
 
   var ctrlDeleteItem = function(e) {
-    
-    // get the id of the parent element
-    var targetID = e.path[4].id; 
+    if (e.target.className == "ion-ios-close-outline") {
+      // get the id of the parent element
+      var targetID = e.path[4].id;
 
-    //delete item from Data Structure
-    budgetCtrl.deleteItem(targetID); 
-    
-    //delete item from UI
-    uiCtrl.deleteListItem(targetID); 
-    
-    updateBudget();
-    
-    uiCtrl.clearFields();
+      //delete item from Data Structure
+      budgetCtrl.deleteItem(targetID);
+
+      //delete item from UI
+      uiCtrl.deleteListItem(targetID);
+
+      updateBudget();
+
+      uiCtrl.clearFields();
+    }
+  };
+
+  var updatePercentages = function(type, value) {
+    if (type == "exp") {
+      //Calculate Percentages
+      let percentage = budgetCtrl.getPercentages(type, value);
+
+      //display Percentages
+      uiCtrl.displayPercentages(percentage);
+    }
   };
 
   return {
