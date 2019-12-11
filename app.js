@@ -141,6 +141,15 @@ var uiController = (function() {
     deleteBtn: ".item__delete--btn"
   };
 
+  //Format Currency
+  var formatCurrency = function(val) {
+    var format = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD"
+    }).format(val);
+    return format;
+  };
+
   return {
     getInput: function() {
       return {
@@ -162,12 +171,12 @@ var uiController = (function() {
         html =
           '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
-
+      var value = formatCurrency(obj.value);
       // Replace placeholder text with some actual data
       newHtml = html
         .replace("%id%", obj.id)
         .replace("%description%", obj.description)
-        .replace("%value%", obj.value);
+        .replace("%value%", value);
 
       // Insert the HTML into the DOM
       document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
@@ -190,10 +199,12 @@ var uiController = (function() {
     },
 
     displayBudget: function(obj) {
-      document.querySelector(domStrings.budgetLabel).textContent = obj.budget;
-      document.querySelector(domStrings.incomeLabel).textContent = obj.totalInc;
-      document.querySelector(domStrings.expenseLabel).textContent =
-        obj.totalExp;
+      var totalInc = formatCurrency(obj.totalInc);
+      var totalExp = formatCurrency(obj.totalExp);
+      var budget = formatCurrency(obj.budget);
+      document.querySelector(domStrings.budgetLabel).textContent = budget;
+      document.querySelector(domStrings.incomeLabel).textContent = totalInc;
+      document.querySelector(domStrings.expenseLabel).textContent = totalExp;
 
       if (obj.percentage > 0)
         document.querySelector(domStrings.percentageLabel).textContent =
