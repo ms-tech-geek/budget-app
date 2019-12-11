@@ -142,10 +142,10 @@ var uiController = (function() {
   };
 
   //Format Currency
-  var formatCurrency = function(val) {
-    var format = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD"
+  var formatCurrency = function(val) { 
+    var format = new Intl.NumberFormat("en-US", { // Fix - should be part of domStrings
+      style: "currency", 
+      currency: "USD" // Fix - should be part of domStrings
     }).format(val);
     return format;
   };
@@ -161,6 +161,7 @@ var uiController = (function() {
 
     addListItem: function(obj, type) {
       var html, newHtml, element;
+      
       // Create HTML string with placeholder text
       if (type === "inc") {
         element = domStrings.incomeContainer;
@@ -172,6 +173,7 @@ var uiController = (function() {
           '<div class="item clearfix" id="expense-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
       var value = formatCurrency(obj.value);
+
       // Replace placeholder text with some actual data
       newHtml = html
         .replace("%id%", obj.id)
@@ -202,6 +204,7 @@ var uiController = (function() {
       var totalInc = formatCurrency(obj.totalInc);
       var totalExp = formatCurrency(obj.totalExp);
       var budget = formatCurrency(obj.budget);
+
       document.querySelector(domStrings.budgetLabel).textContent = budget;
       document.querySelector(domStrings.incomeLabel).textContent = totalInc;
       document.querySelector(domStrings.expenseLabel).textContent = totalExp;
@@ -242,8 +245,8 @@ var uiController = (function() {
     //Update Month in UI
     updateMonth: function(month) {
       document.getElementsByClassName(
-        "budget__title--month"
-      )[0].innerHTML = month;
+        "budget__title--month" // Fix - should be part of domStrings
+      )[0].innerHTML = month; // Todo - should be month and year
     }
   };
 })();
@@ -312,7 +315,7 @@ var appController = (function(budgetCtrl, uiCtrl) {
   };
 
   var ctrlDeleteItem = function(e) {
-    if (e.target.className == "ion-ios-close-outline") {
+    if (e.target.className == "ion-ios-close-outline") { // Fix - should be part of domStrings
       // get the id of the parent element
       var targetID = e.path[4].id;
 
