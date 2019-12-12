@@ -141,6 +141,7 @@ var uiController = (function () {
     itemPercentage: "item__percentage",
     deleteBtn: ".item__delete--btn",
     monthClass: "budget__title--month",
+    deleteClass: "ion-ios-close-outline",
     format: new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD"
@@ -319,7 +320,8 @@ var appController = (function (budgetCtrl, uiCtrl) {
   };
 
   var ctrlDeleteItem = function (e) {
-    if (e.target.className == "ion-ios-close-outline") { // Fix - should be part of domStrings
+    let DOM = uiCtrl.getDOMstrings();
+    if (e.target.className == DOM.deleteClass) { // Fix - should be part of domStrings
       // get the id of the parent element
       var targetID = e.path[4].id;
 
