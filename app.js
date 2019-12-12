@@ -120,7 +120,7 @@ var budgetController = (function () {
     getMonthYear: function () {
       var month = new Date().getMonth();
       var year = new Date().getFullYear();
-      return months[month, year];
+      return [months[month], year];
     }
   };
 })();
@@ -139,7 +139,8 @@ var uiController = (function () {
     expenseLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
     itemPercentage: "item__percentage",
-    deleteBtn: ".item__delete--btn"
+    deleteBtn: ".item__delete--btn",
+    monthClass: "budget__title--month"
   };
 
   //Format Currency
@@ -246,7 +247,7 @@ var uiController = (function () {
     //Update Month in UI
     updateMonth: function (month, year) {
       document.getElementsByClassName(
-        "budget__title--month" // Fix - should be part of domStrings
+        domStrings.monthClass
       )[0].innerHTML = `${month}, ${year}`;
     }
   };
@@ -275,7 +276,7 @@ var appController = (function (budgetCtrl, uiCtrl) {
   //Get Month
   var displayMonth = function () {
     let month = budgetCtrl.getMonthYear()[0];
-    let year = budgetCtrl.getMonthYear()[1]
+    let year = budgetCtrl.getMonthYear()[1];
     uiCtrl.updateMonth(month, year);
   };
 
