@@ -140,15 +140,16 @@ var uiController = (function () {
     percentageLabel: ".budget__expenses--percentage",
     itemPercentage: "item__percentage",
     deleteBtn: ".item__delete--btn",
-    monthClass: "budget__title--month"
+    monthClass: "budget__title--month",
+    format: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD"
+    })
   };
 
   //Format Currency
   var formatCurrency = function (val) {
-    var format = new Intl.NumberFormat("en-US", { // Fix - should be part of domStrings
-      style: "currency",
-      currency: "USD" // Fix - should be part of domStrings
-    }).format(val);
+    var format = domStrings.format.format(val);
     return format;
   };
 
